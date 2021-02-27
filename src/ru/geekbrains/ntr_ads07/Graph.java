@@ -1,4 +1,5 @@
 package ru.geekbrains.ntr_ads07;
+
 import java.util.*;
 
 public class Graph implements IGraph {
@@ -18,8 +19,8 @@ public class Graph implements IGraph {
 
     @Override
     public void addEdge(String startLabel, String endLabel) {
-        int startIndex  = indexOf(startLabel);
-        int endIndex    = indexOf(endLabel);
+        int startIndex = indexOf(startLabel);
+        int endIndex = indexOf(endLabel);
 
         if (startIndex == -1 || endIndex == -1) {
             throw new IllegalArgumentException("Invalid label for vertex");
@@ -75,11 +76,11 @@ public class Graph implements IGraph {
         Stack<Vertex> stack = new Stack<>();
         Vertex vertex = vertexList.get(startIndex);
 
-        visitVertex(stack, vertex);
+        visitVertexAndDisplay(stack, vertex);
         while (!stack.isEmpty()) {
             vertex = getNearUnvisitedVertex(stack.peek());
             if (vertex != null) {
-                visitVertex(stack, vertex);
+                visitVertexAndDisplay(stack, vertex);
             } else {
                 stack.pop();
             }
@@ -98,11 +99,11 @@ public class Graph implements IGraph {
         Queue<Vertex> queue = new LinkedList<>();
         Vertex vertex = vertexList.get(startIndex);
 
-        visitVertex(queue, vertex);
+        visitVertexAndDisplay(queue, vertex);
         while (!queue.isEmpty()) {
             vertex = getNearUnvisitedVertex(queue.peek());
             if (vertex != null) {
-                visitVertex(queue, vertex);
+                visitVertexAndDisplay(queue, vertex);
             } else {
                 queue.remove();
             }
@@ -111,9 +112,67 @@ public class Graph implements IGraph {
         resetVertexState();
     }
 
+    @Override
+    public void shortestRoute(String startLabel, String endLabel) {
+        int startIndex = indexOf(startLabel);
+        if (startIndex == -1) {
+            throw new IllegalArgumentException("Invalid start label.");
+        }
+
+        int endIndex = indexOf(endLabel);
+        if (endIndex == -1) {
+            throw new IllegalArgumentException("Invalid end label.");
+        }
+
+        if (startIndex == endIndex) {
+            System.out.println("Start label is equals to end label.");
+            return;
+        }
+
+        Queue<Vertex> queue = new LinkedList<>();
+        Vertex vertex = vertexList.get(startIndex);
+
+        visitVertex(queue, vertex);
+        while (!queue.isEmpty()) {
+            vertex = getNearUnvisitedVertex(queue.peek());
+            if (vertex != null) {
+                visitVertex(queue, vertex);
+                if (vertex.getLabel().equals(endLabel)) {
+                    break;
+                }
+            } else {
+                queue.remove();
+            }
+        }
+        if (queue.isEmpty()) {
+            System.out.printf("The path between %s and %s was not found.\n",
+                    vertexList.get(startIndex), vertexList.get(endIndex));
+        } else {
+            displayPath(getShortestPath(vertexList.get(endIndex)));
+        }
+        resetVertexState();
+    }
+
+    private List<Vertex> getShortestPath(Vertex endVertex) {
+        Deque<Vertex> path = new LinkedList<>();
+        Vertex vertex = endVertex;
+        path.addFirst(vertex);
+
+        while (vertex.getPreviousVertex() != null) {
+            vertex = vertex.getPreviousVertex();
+            path.addFirst(vertex);
+        }
+        return new ArrayList<>(path);
+    }
+
+    private void displayPath(List<Vertex> vertexList) {
+        vertexList.forEach(System.out::println);
+    }
+
     private void resetVertexState() {
         for (Vertex vertex : vertexList) {
             vertex.setVisited(false);
+            vertex.setPreviousVertex(null);
         }
     }
 
@@ -127,13 +186,25 @@ public class Graph implements IGraph {
         return null;
     }
 
-    private void visitVertex(Stack<Vertex> stack, Vertex vertex) {
+    private void visitVertexAndDisplay(Stack<Vertex> stack, Vertex vertex) {
         System.out.println(vertex);
         vertex.setVisited(true);
         stack.push(vertex);
     }
-    private void visitVertex(Queue<Vertex> queue, Vertex vertex) {
+
+    private void visitVertexAndDisplay(Queue<Vertex> queue, Vertex vertex) {
         System.out.println(vertex);
+        vertex.setVisited(true);
+        queue.add(vertex);
+    }
+
+    private void visitVertex(Stack<Vertex> stack, Vertex vertex) {
+        vertex.setVisited(true);
+        stack.push(vertex);
+    }
+
+    private void visitVertex(Queue<Vertex> queue, Vertex vertex) {
+        vertex.setPreviousVertex(queue.peek());
         vertex.setVisited(true);
         queue.add(vertex);
     }
