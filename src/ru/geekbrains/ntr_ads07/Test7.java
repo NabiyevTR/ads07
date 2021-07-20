@@ -1,65 +1,72 @@
 package ru.geekbrains.ntr_ads07;
 
+import static ru.geekbrains.ntr_ads07.City.*;
+
 public class Test7 {
 
     public static void main(String[] args) {
-//        testGraph();
-//        testDfs();
-        testBfs();
-    }
 
-    private static void testGraph() {
-        IGraph graph = new Graph(4);
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("D");
+        IGraph graph = new Graph(11);
+        graph.addVertex(MOSCOW);
+        graph.addVertex(TULA);
+        graph.addVertex(LIPETSK);
+        graph.addVertex(VORONEZH);
+        graph.addVertex(RYAZAN);
+        graph.addVertex(TAMBOV);
+        graph.addVertex(SARATOV);
+        graph.addVertex(KALUGA);
+        graph.addVertex(OREL);
+        graph.addVertex(KURSK);
 
-        graph.addEdges("A", "B", "C");
-        graph.addEdges("B", "A", "C", "D");
-        graph.addEdges("C", "A", "B", "D");
-        graph.addEdges("D", "B", "C");
 
-        System.out.println("Size of graph is " + graph.getSize());
-        graph.display();
-    }
+        graph.addEdges(MOSCOW, TULA, RYAZAN, KALUGA);
+        graph.addEdges(TULA, LIPETSK);
+        graph.addEdges(TAMBOV, RYAZAN, SARATOV);
+        graph.addEdges(OREL, KALUGA, KURSK);
+        graph.addEdges(VORONEZH, LIPETSK, SARATOV, KURSK);
 
-    private static void testDfs() {
-        Graph graph = new Graph(7);
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("D");
-        graph.addVertex("E");
-        graph.addVertex("F");
-        graph.addVertex("G");
+        graph.shortestRoute(MOSCOW, VORONEZH);
+        /*
+        Vertex{label='Москва'}
+        Vertex{label='Тула'}
+        Vertex{label='Липецк'}
+        Vertex{label='Воронеж'}
 
-        graph.addEdges("A", "B", "C", "D");
-        graph.addEdges("B", "E");
-        graph.addEdges("D", "F");
-        graph.addEdges("F", "G");
+         */
+        graph.shortestRoute(MOSCOW, MOSCOW);
+        //Start label is equals to end label.
 
-        graph.dfs("A");
-        //A B E C D F G
-    }
+        graph.shortestRoute(MOSCOW, OREL);
+        /*
+        Vertex{label='Москва'}
+        Vertex{label='Калуга'}
+        Vertex{label='Орел'}
+         */
+        graph.shortestRoute(MOSCOW, SARATOV);
+        /*
+        Vertex{label='Москва'}
+        Vertex{label='Рязань'}
+        Vertex{label='Тамбов'}
+        Vertex{label='Саратов'}
+         */
 
-    private static void testBfs() {
-        Graph graph = new Graph(8);
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("D");
-        graph.addVertex("E");
-        graph.addVertex("F");
-        graph.addVertex("G");
-        graph.addVertex("H");
+        graph.addVertex(PALERMO);
+        graph.shortestRoute(MOSCOW, PALERMO);
+        // The path between Vertex{label='Москва'} and Vertex{label='Палермо'} was not found.
 
-        graph.addEdges("A", "B", "C", "D");
-        graph.addEdges("B", "E");
-        graph.addEdges("E", "H");
-        graph.addEdges("C", "F");
-        graph.addEdges("D", "G");
+        graph.addEdges(PALERMO, MOSCOW, VORONEZH);
+        graph.shortestRoute(MOSCOW, VORONEZH);
+        /*
+        Vertex{label='Москва'}
+        Vertex{label='Палермо'}
+        Vertex{label='Воронеж'}
+         */
 
-        graph.bfs("A");
+        graph.shortestRoute(SARATOV, PALERMO);
+        /*
+        Vertex{label='Саратов'}
+        Vertex{label='Воронеж'}
+        Vertex{label='Палермо'}
+         */
     }
 }

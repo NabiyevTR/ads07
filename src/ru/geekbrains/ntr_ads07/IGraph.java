@@ -21,4 +21,6 @@ public interface IGraph {
      * англ. breadth-first search, BFS
      */
     void bfs(String startLabel);
+
+    void shortestRoute(String startLabel, String endLabel);
 }
